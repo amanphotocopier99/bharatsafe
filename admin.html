@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BharatSafe Admin — Journal manager</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="glass-nav.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="cursor.css" />
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="index.html" aria-label="BharatSafe home"><span class="brand-mark">+</span><span>BharatSafe</span></a><nav class="desktop-nav" aria-label="Admin navigation"><a href="index.html">View website</a><a href="blog.html">View journal</a></nav><span class="admin-badge">Local admin</span></header>
+  <main class="admin-shell">
+    <div class="admin-heading"><div><p class="eyebrow"><span class="eyebrow-dot"></span> Content workspace</p><h1>Journal<br /><em>manager.</em></h1></div><div class="admin-stats"><div><strong id="total-posts">0</strong><span>Total posts</span></div><div><strong id="published-posts">0</strong><span>Published</span></div></div></div>
+    <div class="admin-layout">
+      <section class="editor-panel"><div class="panel-heading"><h2 id="editor-title">Write a new story</h2><button class="text-button" id="cancel-edit" type="button" hidden>Cancel edit</button></div><form id="post-form"><label>Title<input id="post-title" required maxlength="90" placeholder="A safer way to travel with children" /></label><label>Category<select id="post-category"><option>Safety</option><option>Travel</option><option>How it works</option><option>Community</option></select></label><label>Excerpt<textarea id="post-excerpt" required maxlength="180" rows="3" placeholder="A short introduction for the journal card..."></textarea></label><label>Story<textarea id="post-content" required rows="10" placeholder="Write your story here..."></textarea></label><label class="check-row"><input id="post-published" type="checkbox" checked /> Publish this story now</label><button class="button button-dark" type="submit"><span id="submit-label">Publish story</span> <span>↗</span></button><p class="form-message" id="form-message" role="status"></p></form></section>
+      <aside class="details-panel"><div class="panel-heading"><h2>BharatSafe details</h2><span class="status-dot">Live</span></div><div class="detail-card"><span>Brand</span><strong>BharatSafe</strong></div><div class="detail-card"><span>Promise</span><strong>One scan. The right help.</strong></div><div class="detail-card"><span>Support</span><strong>support@bharatsafes.com</strong></div><div class="detail-card"><span>Emergency hotline</span><strong>112</strong></div><a class="arrow-link" href="index.html#shop">View product page <span>↗</span></a></aside>
+    </div>
+    <section class="posts-manager"><div class="panel-heading"><h2>Your stories</h2><span id="empty-label">Saved in this browser</span></div><div id="admin-post-list"></div></section>
+  </main>
+  <script src="cursor.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

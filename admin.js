@@ -1,0 +1,21 @@
+const storageKey = 'bharatsafe_blog_posts';
+const fallbackPosts = [
+  { id: 'welcome', title: 'One scan can save a life', category: 'Safety', excerpt: 'Why sharing the right emergency details before you need them is one of the simplest acts of care.', content: 'Emergencies are difficult enough without having to remember every important detail. BharatSafe gives families, riders, and travellers a simple way to make critical information available when every second matters.', published: true, date: '2026-09-22' },
+  { id: 'travel-ready', title: 'A calmer way to travel', category: 'Travel', excerpt: 'Small habits that help you stay ready for the unexpected, from a weekend ride to a long journey.', content: 'The best safety tools are the ones you set up before you need them. Keep your emergency contacts current, add useful medical notes, and make sure your BharatSafe tag is visible.', published: true, date: '2026-09-20' }
+];
+let posts = JSON.parse(localStorage.getItem(storageKey) || JSON.stringify(fallbackPosts));
+let editingId = null;
+const form = document.querySelector('#post-form');
+const message = document.querySelector('#form-message');
+function save() { localStorage.setItem(storageKey, JSON.stringify(posts)); }
+function refresh() {
+  document.querySelector('#total-posts').textContent = posts.length;
+  document.querySelector('#published-posts').textContent = posts.filter((post) => post.published).length;
+  document.querySelector('#empty-label').textContent = posts.length ? `${posts.length} saved in this browser` : 'No stories yet';
+  document.querySelector('#admin-post-list').innerHTML = posts.length ? posts.map((post) => `<article class="managed-post"><div><span class="post-status ${post.published ? 'is-live' : ''}">${post.published ? 'Published' : 'Draft'}</span><h3>${post.title}</h3><p>${post.category} · ${post.excerpt}</p></div><div class="post-actions"><button data-action="edit" data-id="${post.id}" type="button">Edit</button><button data-action="delete" data-id="${post.id}" type="button">Delete</button></div></article>`).join('') : '<div class="empty-manager">Your published and draft stories will appear here.</div>';
+}
+function resetForm() { editingId = null; form.reset(); document.querySelector('#editor-title').textContent = 'Write a new story'; document.querySelector('#submit-label').textContent = 'Publish story'; document.querySelector('#cancel-edit').hidden = true; }
+form.addEventListener('submit', (event) => { event.preventDefault(); const existing = posts.find((post) => post.id === editingId); const post = { id: editingId || `post-${Date.now()}`, title: document.querySelector('#post-title').value.trim(), category: document.querySelector('#post-category').value, excerpt: document.querySelector('#post-excerpt').value.trim(), content: document.querySelector('#post-content').value.trim(), published: document.querySelector('#post-published').checked, date: existing ? existing.date : new Date().toISOString() }; posts = existing ? posts.map((item) => item.id === editingId ? post : item) : [post, ...posts]; save(); refresh(); resetForm(); message.textContent = 'Story saved successfully.'; setTimeout(() => { message.textContent = ''; }, 2500); });
+document.querySelector('#cancel-edit').addEventListener('click', resetForm);
+document.querySelector('#admin-post-list').addEventListener('click', (event) => { const button = event.target.closest('button'); if (!button) return; const post = posts.find((item) => item.id === button.dataset.id); if (button.dataset.action === 'delete') { posts = posts.filter((item) => item.id !== button.dataset.id); save(); refresh(); return; } editingId = post.id; document.querySelector('#editor-title').textContent = 'Edit your story'; document.querySelector('#submit-label').textContent = 'Save changes'; document.querySelector('#cancel-edit').hidden = false; document.querySelector('#post-title').value = post.title; document.querySelector('#post-category').value = post.category; document.querySelector('#post-excerpt').value = post.excerpt; document.querySelector('#post-content').value = post.content; document.querySelector('#post-published').checked = post.published; window.scrollTo({ top: 0, behavior: 'smooth' }); });
+refresh();

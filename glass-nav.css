@@ -1,0 +1,38 @@
+.site-header {
+  height: 64px;
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+  max-width: 1320px;
+  margin: 16px auto 0;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 18px;
+  background: rgba(247, 245, 239, 0.68);
+  box-shadow: 0 10px 30px rgba(21, 20, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+.header-cta {
+  border: 1px solid rgba(21, 20, 20, 0.15);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.35);
+  padding: 8px 12px;
+  transition: 0.2s;
+}
+
+.header-cta:hover {
+  background: var(--pink);
+  border-color: var(--pink);
+}
+
+@media (max-width: 800px) {
+  .site-header {
+    height: 58px;
+    top: 10px;
+    margin-top: 10px;
+    padding: 0 12px;
+    border-radius: 16px;
+  }
+}
