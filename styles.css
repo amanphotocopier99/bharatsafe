@@ -60,3 +60,26 @@
     transform: translateX(0%);
   }
 }
+.card-stars {
+  color: #ff9800;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Gray out the unlit 5th star on 4-star reviews */
+.card-stars .star-dim {
+  color: #d1d5db;
+}
+
+/* Small, subtle rating number badge next to stars */
+.card-stars .score {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4b5563;
+  margin-left: 0.35rem;
+  letter-spacing: normal;
+}
