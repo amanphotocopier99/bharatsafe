@@ -3,22 +3,315 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BharatSafe Admin — Journal manager</title>
+  <title>BharatSafe Admin — Operations & Content Portal</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="glass-nav.css" />
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="cursor.css" />
+  <style>
+    /* BharatSafe Admin Workspace Utilities */
+    .admin-nav-tabs {
+      display: flex;
+      gap: 12px;
+      margin: 24px 0 32px 0;
+      border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+      padding-bottom: 12px;
+    }
+    .admin-tab-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: inherit;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .admin-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .admin-tab-btn.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      font-weight: 600;
+    }
+    .admin-tab-view {
+      display: none;
+    }
+    .admin-tab-view.active {
+      display: block;
+    }
+    .admin-table-container {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+    .admin-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .admin-data-table th, 
+    .admin-data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      vertical-align: middle;
+    }
+    .admin-data-table th {
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    .table-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      display: block;
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .status-new {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+    .status-resolved {
+      background: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+    .action-btn-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn-sm-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .btn-sm-action {
+      background: rgba(255, 255, 255, 0.1);
+      color: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .img-preview-box {
+      margin-top: 8px;
+      display: none;
+      max-width: 140px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header"><a class="brand" href="index.html" aria-label="BharatSafe home"><span class="brand-mark">+</span><span>BharatSafe</span></a><nav class="desktop-nav" aria-label="Admin navigation"><a href="index.html">View website</a><a href="blog.html">View journal</a></nav><span class="admin-badge">Local admin</span></header>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="BharatSafe home">
+      <span class="brand-mark">+</span><span>BharatSafe</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Admin navigation">
+      <a href="index.html">View website</a>
+      <a href="blog.html">View journal</a>
+      <a href="index.html#shop">Shop</a>
+    </nav>
+    <span class="admin-badge">Admin Hub</span>
+  </header>
+
   <main class="admin-shell">
-    <div class="admin-heading"><div><p class="eyebrow"><span class="eyebrow-dot"></span> Content workspace</p><h1>Journal<br /><em>manager.</em></h1></div><div class="admin-stats"><div><strong id="total-posts">0</strong><span>Total posts</span></div><div><strong id="published-posts">0</strong><span>Published</span></div></div></div>
-    <div class="admin-layout">
-      <section class="editor-panel"><div class="panel-heading"><h2 id="editor-title">Write a new story</h2><button class="text-button" id="cancel-edit" type="button" hidden>Cancel edit</button></div><form id="post-form"><label>Title<input id="post-title" required maxlength="90" placeholder="A safer way to travel with children" /></label><label>Category<select id="post-category"><option>Safety</option><option>Travel</option><option>How it works</option><option>Community</option></select></label><label>Excerpt<textarea id="post-excerpt" required maxlength="180" rows="3" placeholder="A short introduction for the journal card..."></textarea></label><label>Story<textarea id="post-content" required rows="10" placeholder="Write your story here..."></textarea></label><label class="check-row"><input id="post-published" type="checkbox" checked /> Publish this story now</label><button class="button button-dark" type="submit"><span id="submit-label">Publish story</span> <span>↗</span></button><p class="form-message" id="form-message" role="status"></p></form></section>
-      <aside class="details-panel"><div class="panel-heading"><h2>BharatSafe details</h2><span class="status-dot">Live</span></div><div class="detail-card"><span>Brand</span><strong>BharatSafe</strong></div><div class="detail-card"><span>Promise</span><strong>One scan. The right help.</strong></div><div class="detail-card"><span>Support</span><strong>support@bharatsafes.com</strong></div><div class="detail-card"><span>Emergency hotline</span><strong>112</strong></div><a class="arrow-link" href="index.html#shop">View product page <span>↗</span></a></aside>
+    <div class="admin-heading">
+      <div>
+        <p class="eyebrow"><span class="eyebrow-dot"></span> Central control panel</p>
+        <h1 id="view-heading-title">Journal<br /><em>manager.</em></h1>
+      </div>
+      <div class="admin-stats">
+        <div><strong id="stat-primary-count">0</strong><span id="stat-primary-label">Total posts</span></div>
+        <div><strong id="stat-secondary-count">0</strong><span id="stat-secondary-label">Published</span></div>
+      </div>
     </div>
-    <section class="posts-manager"><div class="panel-heading"><h2>Your stories</h2><span id="empty-label">Saved in this browser</span></div><div id="admin-post-list"></div></section>
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-nav-tabs" aria-label="Portal sections">
+      <button class="admin-tab-btn active" data-tab="tab-journal">Stories & Journal</button>
+      <button class="admin-tab-btn" data-tab="tab-products">Products & Tags</button>
+      <button class="admin-tab-btn" data-tab="tab-leads">Form Submissions</button>
+    </nav>
+
+    <!-- ==================== TAB 1: JOURNAL MANAGER ==================== -->
+    <div id="tab-journal" class="admin-tab-view active">
+      <div class="admin-layout">
+        <section class="editor-panel">
+          <div class="panel-heading">
+            <h2 id="editor-title">Write a new story</h2>
+            <button class="text-button" id="cancel-edit" type="button" hidden>Cancel edit</button>
+          </div>
+          <form id="post-form">
+            <label>Title
+              <input id="post-title" required maxlength="90" placeholder="A safer way to travel with children" />
+            </label>
+            <label>Category
+              <select id="post-category">
+                <option>Safety</option>
+                <option>Travel</option>
+                <option>How it works</option>
+                <option>Community</option>
+              </select>
+            </label>
+            <label>Cover image (optional)
+              <input type="file" id="post-cover" accept="image/*" />
+              <img id="post-cover-preview" class="img-preview-box" alt="Cover Preview" />
+            </label>
+            <label>Excerpt
+              <textarea id="post-excerpt" required maxlength="180" rows="3" placeholder="A short introduction for the journal card..."></textarea>
+            </label>
+            <label>Story
+              <textarea id="post-content" required rows="10" placeholder="Write your story here..."></textarea>
+            </label>
+            <label class="check-row">
+              <input id="post-published" type="checkbox" checked /> Publish this story now
+            </label>
+            <button class="button button-dark" type="submit">
+              <span id="submit-label">Publish story</span> <span>↗</span>
+            </button>
+            <p class="form-message" id="form-message" role="status"></p>
+          </form>
+        </section>
+
+        <aside class="details-panel">
+          <div class="panel-heading">
+            <h2>BharatSafe details</h2>
+            <span class="status-dot">Live</span>
+          </div>
+          <div class="detail-card"><span>Brand</span><strong>BharatSafe</strong></div>
+          <div class="detail-card"><span>Promise</span><strong>One scan. The right help.</strong></div>
+          <div class="detail-card"><span>Support</span><strong>support@bharatsafes.com</strong></div>
+          <div class="detail-card"><span>Emergency hotline</span><strong>112</strong></div>
+          <a class="arrow-link" href="index.html#shop">View product page <span>↗</span></a>
+        </aside>
+      </div>
+
+      <section class="posts-manager" style="margin-top: 36px;">
+        <div class="panel-heading">
+          <h2>Your stories</h2>
+          <span id="empty-label">Saved in this browser</span>
+        </div>
+        <div id="admin-post-list"></div>
+      </section>
+    </div>
+
+    <!-- ==================== TAB 2: PRODUCTS MANAGER ==================== -->
+    <div id="tab-products" class="admin-tab-view">
+      <div class="admin-layout">
+        <section class="editor-panel">
+          <div class="panel-heading">
+            <h2 id="product-editor-title">Add new product / QR tag</h2>
+            <button class="text-button" id="cancel-product-edit" type="button" hidden>Cancel</button>
+          </div>
+          <form id="product-form">
+            <label>Product / Tag Title
+              <input id="prod-title" required placeholder="e.g. BharatSafe Bike Helmet Tag" />
+            </label>
+            <label>Category
+              <select id="prod-category">
+                <option value="bike">Bike</option>
+                <option value="car">Car</option>
+                <option value="luggage">Luggage</option>
+                <option value="pet">Pet / General</option>
+              </select>
+            </label>
+            <label>Price (₹)
+              <input type="number" id="prod-price" required placeholder="149" />
+            </label>
+            <label>Product Image
+              <input type="file" id="prod-img" accept="image/*" />
+              <img id="prod-img-preview" class="img-preview-box" alt="Product Preview" />
+            </label>
+            <label>Tag Subtitle / Description
+              <textarea id="prod-desc" rows="3" placeholder="Weatherproof, reflective, 3M adhesive..."></textarea>
+            </label>
+            <button class="button button-dark" type="submit">
+              <span id="prod-submit-label">Save product</span> <span>↗</span>
+            </button>
+            <p class="form-message" id="prod-form-message" role="status"></p>
+          </form>
+        </section>
+
+        <aside class="details-panel">
+          <div class="panel-heading">
+            <h2>Inventory status</h2>
+          </div>
+          <div class="detail-card"><span>Active tags</span><strong id="stat-active-tags">0</strong></div>
+          <div class="detail-card"><span>Base price</span><strong>₹149</strong></div>
+          <div class="detail-card"><span>Fulfillment</span><strong>India Post / Courier</strong></div>
+        </aside>
+      </div>
+
+      <section class="posts-manager" style="margin-top: 36px;">
+        <div class="panel-heading">
+          <h2>Product catalog</h2>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="product-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================== TAB 3: FORM SUBMISSIONS ==================== -->
+    <div id="tab-leads" class="admin-tab-view">
+      <section class="posts-manager">
+        <div class="panel-heading">
+          <h2>User form submissions & emergency activations</h2>
+          <button id="export-leads-btn" class="text-button" type="button">Export to CSV ↓</button>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Full Name</th>
+                <th>Phone</th>
+                <th>Emergency Contact</th>
+                <th>Tag Category / Note</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leads-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
   </main>
+
   <script src="cursor.js"></script>
   <script src="admin.js"></script>
 </body>
