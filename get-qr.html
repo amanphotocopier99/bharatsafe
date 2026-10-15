@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BharatSafe — Get your QR</title>
+  <!-- link your existing styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="glass-nav.css">
+  <link rel="stylesheet" href="cursor.css">
+  <style>
+    /* minimal page-specific tweaks to fit with your design */
+    .form-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .form-card .section-kicker {
+      margin-bottom: 0.75rem;
+    }
+
+    .form-card h1 {
+      font-size: 2.5rem;
+      margin: 0.25rem 0 1.25rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .form-card h1 em {
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: #1e1e1e;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 1rem;
+      border-radius: 16px;
+      border: 1.5px solid #e2e2e2;
+      background: #fafafa;
+      transition: 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #1e1e1e;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231e1e1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.2rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 560px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .form-card {
+        padding: 1.75rem 1.25rem;
+      }
+      .form-card h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .button-full {
+      width: 100%;
+      justify-content: center;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #1e1e1e;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      padding-bottom: 0.1rem;
+    }
+
+    .back-link:hover {
+      border-bottom-color: #1e1e1e;
+    }
+
+    /* success message (hidden by default) */
+    .success-message {
+      display: none;
+      background: #e6f7e6;
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-left: 6px solid #2e7d32;
+    }
+
+    .success-message p {
+      margin: 0;
+      color: #1e3a1e;
+      font-weight: 500;
+    }
+
+    .success-message small {
+      display: block;
+      margin-top: 0.5rem;
+      color: #2e5e2e;
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+  <!-- header — same as your main page, adjusted for this page -->
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="BharatSafe home">
+      <span class="brand-mark" aria-hidden="true">+</span><span>BharatSafe</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#why-bharatsafe">Why BharatSafe</a>
+      <a href="about-us.html">About us</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <a class="header-cta" href="get-qr.html">Get your QR <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="top">
+    <div class="form-wrap">
+      <div class="form-card">
+        <div class="section-kicker">
+          <span>YOUR BHARATSAFE</span>
+          <span>(STEP 1 OF 1)</span>
+        </div>
+        <h1>Almost there.<br /><em>Just a few details.</em></h1>
+        <p style="margin-bottom: 2rem; color: #4a4a4a; font-size: 1.05rem;">
+          Fill in your emergency information and choose your tag type. We'll link it to your unique QR code.
+        </p>
+
+        <!-- FORM — posts to a backend endpoint (replace action with your own) -->
+        <form id="qrDetailsForm" action="/submit-details" method="POST">
+          <div class="form-group">
+            <label for="fullName">Full name</label>
+            <input type="text" id="fullName" name="fullName" placeholder="e.g. Arjun Sharma" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactNumber">Contact number</label>
+              <input type="tel" id="contactNumber" name="contactNumber" placeholder="+91 98765 43210" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" placeholder="Street, city, state" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bloodGroup">Blood group</label>
+              <select id="bloodGroup" name="bloodGroup" required>
+                <option value="" disabled selected>Select blood group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A−</option>
+                <option value="B+">B+</option>
+                <option value="B-">B−</option>
+                <option value="O+">O+</option>
+                <option value="O-">O−</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB−</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="tagType">Tag type</label>
+              <select id="tagType" name="tagType" required>
+                <option value="" disabled selected>Select tag type</option>
+                <option value="bike">Bike</option>
+                <option value="car">Car</option>
+                <option value="luggage">Luggage</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- hidden input to carry the selected product type if needed -->
+          <input type="hidden" name="productType" id="hiddenProductType" value="">
+
+          <button type="submit" class="button button-dark button-full" id="submitBtn">
+            Create my BharatSafe ID <span aria-hidden="true">↗</span>
+          </button>
+        </form>
+
+        <!-- success message (shown after submission) -->
+        <div class="success-message" id="successMessage">
+          <p>✓ Details saved — your BharatSafe QR is on its way.</p>
+          <small>Check your email for confirmation. You can update your info anytime.</small>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to home</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- footer — same as main page -->
+  <footer class="site-footer">
+    <a class="brand" href="index.html" aria-label="BharatSafe home">
+      <span class="brand-mark" aria-hidden="true">+</span><span>BharatSafe</span>
+    </a>
+    <p>One scan. The right help. At the right time.</p>
+    <div>
+      <a href="about-us.html">About us</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="get-qr.html">Get your QR</a>
+      <a href="blog.html">Journal</a>
+      <a href="admin.html">Admin</a>
+    </div>
+    <small>© 2026 BharatSafe. Made in India with pride. · Emergency hotline 112 · support@bharatsafe.com</small>
+  </footer>
+
+  <!-- scripts -->
+  <script src="cursor.js"></script>
+  <script>
+    (function() {
+      const form = document.getElementById('qrDetailsForm');
+      const successMsg = document.getElementById('successMessage');
+      const submitBtn = document.getElementById('submitBtn');
+      const hiddenProductType = document.getElementById('hiddenProductType');
+
+      // if the URL has ?type=bike / ?type=car / ?type=luggage, pre-select the dropdown
+      const urlParams = new URLSearchParams(window.location.search);
+      const preselectedType = urlParams.get('type');
+      if (preselectedType && ['bike', 'car', 'luggage'].includes(preselectedType)) {
+        const tagSelect = document.getElementById('tagType');
+        if (tagSelect) {
+          tagSelect.value = preselectedType;
+          hiddenProductType.value = preselectedType;
+        }
+      }
+
+      // also update hidden field when the user changes the dropdown
+      document.getElementById('tagType').addEventListener('change', function(e) {
+        hiddenProductType.value = e.target.value;
+      });
+
+      // handle form submission
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // simple validation (HTML5 does most, but just in case)
+        const fullName = document.getElementById('fullName').value.trim();
+        const contact = document.getElementById('contactNumber').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const blood = document.getElementById('bloodGroup').value;
+        const tag = document.getElementById('tagType').value;
+
+        if (!fullName || !contact || !email || !address || !blood || !tag) {
+          alert('Please fill in all the fields.');
+          return;
+        }
+
+        // set hidden product type before submission (if not already)
+        hiddenProductType.value = tag;
+
+        // disable button to prevent double submission
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving…';
+
+        // --- simulate a network request (replace with actual fetch to your backend) ---
+        // For now, we'll just show the success message after a short delay.
+        // In production, you'd use fetch() to POST to your server endpoint.
+        setTimeout(function() {
+          // hide the form? or just show success message. We'll show message and keep form visible but disabled.
+          successMsg.style.display = 'block';
+          submitBtn.textContent = '✓ Details saved';
+          submitBtn.style.background = '#2e7d32';
+          submitBtn.style.borderColor = '#2e7d32';
+          submitBtn.disabled = true;
+
+          // optionally, you could reset the form or redirect:
+          // window.location.href = '/thank-you.html';
+          
+          // For demonstration, we log the data:
+          console.log('Form submitted (demo):', {
+            fullName, contact, email, address, bloodGroup: blood, tagType: tag
+          });
+
+          // If you want to actually submit to a backend, uncomment the following
+          // and remove the setTimeout above:
+          /*
+          fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fullName, contact, email, address, bloodGroup: blood, tagType: tag })
+          })
+          .then(response => response.json())
+          .then(data => {
+            successMsg.style.display = 'block';
+            submitBtn.textContent = '✓ Details saved';
+            submitBtn.style.background = '#2e7d32';
+            submitBtn.disabled = true;
+          })
+          .catch(error => {
+            alert('Something went wrong. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create my BharatSafe ID ↗';
+          });
+          */
+        }, 600);
+      });
+
+      // if the URL has ?type=... and the form loads, also set the dropdown value on page load
+      window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type');
+        if (type && ['bike', 'car', 'luggage'].includes(type)) {
+          document.getElementById('tagType').value = type;
+          hiddenProductType.value = type;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
